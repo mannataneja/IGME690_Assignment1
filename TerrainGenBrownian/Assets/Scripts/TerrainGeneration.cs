@@ -126,8 +126,8 @@ public class TerrainGeneration : MonoBehaviour
                     // remember to give it all 4 sides of the image coords
                     uvs.Add(new Vector2(0.0f,0.0f));
                     uvs.Add(new Vector2(0.0f,1.0f));
+                    uvs.Add(new Vector2(1.0f, 0.0f));
                     uvs.Add(new Vector2(1.0f,1.0f));
-                    uvs.Add(new Vector2(1.0f,0.0f));
                     
                     // front or top face indices for a quad
                     //0,2,1,0,3,2

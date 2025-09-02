@@ -357,6 +357,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2092641476}
   - component: {fileID: 2092641475}
+  - component: {fileID: 2092641477}
   m_Layer: 0
   m_Name: Generator
   m_TagString: Untagged
@@ -380,7 +381,7 @@ MonoBehaviour:
   Width: 128
   Depth: 128
   MaxHeight: 50
-  TerrainMaterial: {fileID: 2100000, guid: efe5727227351d34fb6fd7600aa11b63, type: 2}
+  TerrainMaterial: {fileID: 2100000, guid: 011335186caba6f488f2ec39b2a817e7, type: 2}
   Frequency: 0.2
   Amplitude: 0.62
   Lacunarity: 2
@@ -403,6 +404,20 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2092641477
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2092641474}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 183a85d4eb1a2224b98d1e6d513cab8f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  mDirectoryName: blocks
+  mOutputFileName: ../TerrainGenBrownian/Assets/Materials/atlas.png
 --- !u!1 &2138677391
 GameObject:
   m_ObjectHideFlags: 0
