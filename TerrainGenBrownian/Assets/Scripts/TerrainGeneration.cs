@@ -120,15 +120,35 @@ public class TerrainGeneration : MonoBehaviour
                     vert.Add(new float3(x, y, z));
                     vert.Add(new float3(x, useAltZPlusY, z + 1)); 
                     vert.Add(new float3(x + 1, useAltXPlusY, z));  
-                    vert.Add(new float3(x + 1, useAltXAndZPlusY, z + 1)); 
-                    
+                    vert.Add(new float3(x + 1, useAltXAndZPlusY, z + 1));
+
                     // add uv's
                     // remember to give it all 4 sides of the image coords
-                    uvs.Add(new Vector2(0.0f,0.0f));
-                    uvs.Add(new Vector2(0.0f,1.0f));
-                    uvs.Add(new Vector2(1.0f, 0.0f));
-                    uvs.Add(new Vector2(1.0f,1.0f));
-                    
+                    /*                    uvs.Add(new Vector2(0.0f,0.0f));
+                                        uvs.Add(new Vector2(0.0f,0.5f));
+                                        uvs.Add(new Vector2(0.5f, 0.0f));
+                                        uvs.Add(new Vector2(0.5f, 0.5f));*/
+
+                    int[] allowedTiles = { 1, 3, 5, 8 };
+                    int randomTileIndex = allowedTiles[UnityEngine.Random.Range(0, allowedTiles.Length)];
+
+                    int atlasSize = 4;
+                    float tileSize = 1.0f / atlasSize;
+
+                    int tileX = randomTileIndex % atlasSize;
+                    int tileY = atlasSize - 1 - (randomTileIndex / atlasSize); //flip Y axis
+
+                    float uMin = tileX * tileSize;
+                    float vMin = tileY * tileSize;
+                    float uMax = uMin + tileSize;
+                    float vMax = vMin + tileSize;
+
+                    uvs.Add(new Vector2(uMin, vMin));
+                    uvs.Add(new Vector2(uMin, vMax));
+                    uvs.Add(new Vector2(uMax, vMin));
+                    uvs.Add(new Vector2(uMax, vMax));
+
+
                     // front or top face indices for a quad
                     //0,2,1,0,3,2
                     indices.Add(vertexIndex);
