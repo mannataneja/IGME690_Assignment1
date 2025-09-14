@@ -19,6 +19,8 @@ public class TerrainGeneration : MonoBehaviour
     public float Scale = 0.01f;
     public float NormalizeBias = 1.0f;
 
+    public GameObject[] randomObjects;
+
     private GameObject[] mRealTerrains = new GameObject[3];
     private NoiseAlgorithm mTerrainNoise;
     private GameObject mLight;
@@ -89,6 +91,8 @@ public class TerrainGeneration : MonoBehaviour
 
         }
         NoiseAlgorithm.OnExit();
+
+        SpawnObjectsOnEdges();
     }
 
     private void Update()
@@ -188,5 +192,46 @@ public class TerrainGeneration : MonoBehaviour
 
         return terrainMesh;
     }
+    private void SpawnObjectsOnEdges()
+    {
+        float pathWidth = Width / 4f; // width of clear path
+        float offsetY = 0.5f; // how high above terrain the object sits
+        int totalDepth = Depth * mRealTerrains.Length;
 
+        for (int i = 0; i < randomObjects.Length; i++)
+        {
+            // Decide left or right side
+            bool leftSide = (i % 2 == 0);
+
+            // Random X along left or right edge (avoiding path)
+            float xPos = leftSide
+                ? UnityEngine.Random.Range(0, (Width - pathWidth) / 2f)
+                : UnityEngine.Random.Range((Width + pathWidth) / 2f, Width);
+
+            // Random Z along entire terrain length
+            float zPos = UnityEngine.Random.Range(0, totalDepth);
+
+            // Determine which terrain mesh this point falls on
+            int meshIndex = Mathf.FloorToInt(zPos / Depth);
+            meshIndex = Mathf.Clamp(meshIndex, 0, mRealTerrains.Length - 1);
+
+            GameObject terrain = mRealTerrains[meshIndex];
+            Mesh mesh = terrain.GetComponent<MeshFilter>().mesh;
+            Vector3[] verts = mesh.vertices;
+
+            // Convert global Z to local mesh Z
+            int localZ = Mathf.RoundToInt(zPos - meshIndex * Depth);
+            int localX = Mathf.RoundToInt(xPos);
+
+            // Clamp to mesh vertices
+            localX = Mathf.Clamp(localX, 0, Width);
+            localZ = Mathf.Clamp(localZ, 0, Depth);
+
+            int vertIndex = localX * (Depth + 1) + localZ;
+            float yPos = verts[vertIndex].y + offsetY;
+
+            // Spawn the object
+            Instantiate(randomObjects[i], new Vector3(xPos, yPos, zPos), Quaternion.identity);
+        }
+    }
 }
