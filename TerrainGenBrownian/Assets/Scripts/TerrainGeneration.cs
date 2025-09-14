@@ -68,22 +68,26 @@ public class TerrainGeneration : MonoBehaviour
         mTerrainNoise.InitializeNoise(Width + 1, Depth + 1, RandomSeed);
         mTerrainNoise.InitializePerlinNoise(Frequency, Amplitude, Octaves, 
             Lacunarity, Gain, Scale, NormalizeBias);
-        NativeArray<float> terrainHeightMap = new NativeArray<float>((Width+1) * (Depth+1), Allocator.Persistent);
-        mTerrainNoise.setNoise(terrainHeightMap, 0, 0);
+
 
         // create the mesh and set it to the terrain variable
 
         for (int i = 0; i < 3; i++)
         {
             mRealTerrains[i] = GameObject.CreatePrimitive(PrimitiveType.Cube);
-            mRealTerrains[i].transform.position = new Vector3(0, 0, i * 128);
+            mRealTerrains[i].transform.position = new Vector3(0, 0, i * Depth);
             MeshRenderer meshRenderer = mRealTerrains[i].GetComponent<MeshRenderer>();
             MeshFilter meshFilter = mRealTerrains[i].GetComponent<MeshFilter>();
             meshRenderer.material = TerrainMaterial;
+
+            NativeArray<float> terrainHeightMap = new NativeArray<float>((Width + 1) * (Depth + 1), Allocator.Persistent);
+            mTerrainNoise.setNoise(terrainHeightMap, 0, i * Depth);
+
             meshFilter.mesh = GenerateTerrainMesh(terrainHeightMap);
 
+            terrainHeightMap.Dispose();
+
         }
-        terrainHeightMap.Dispose();
         NoiseAlgorithm.OnExit();
     }
 
