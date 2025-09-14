@@ -175,7 +175,7 @@ MonoBehaviour:
   Octaves: 8
   Scale: 0.01
   NormalizeBias: 1
-  meshes: 3
+  meshes: 6
   randomObjects:
   - {fileID: 7512912777189695979, guid: 8feab02a801d05f4f905ca912ddf9650, type: 3}
   - {fileID: 646703545782714881, guid: 9ef9bedd7c00df84a88029110faedf18, type: 3}
