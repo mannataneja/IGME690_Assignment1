@@ -19,7 +19,7 @@ public class TerrainGeneration : MonoBehaviour
     public float Scale = 0.01f;
     public float NormalizeBias = 1.0f;
 
-    private GameObject mRealTerrain;
+    private GameObject[] mRealTerrains = new GameObject[3];
     private NoiseAlgorithm mTerrainNoise;
     private GameObject mLight;
 
@@ -70,14 +70,19 @@ public class TerrainGeneration : MonoBehaviour
             Lacunarity, Gain, Scale, NormalizeBias);
         NativeArray<float> terrainHeightMap = new NativeArray<float>((Width+1) * (Depth+1), Allocator.Persistent);
         mTerrainNoise.setNoise(terrainHeightMap, 0, 0);
-        
+
         // create the mesh and set it to the terrain variable
-        mRealTerrain = GameObject.CreatePrimitive(PrimitiveType.Cube);
-        mRealTerrain.transform.position = new Vector3(0, 0, 0);
-        MeshRenderer meshRenderer = mRealTerrain.GetComponent<MeshRenderer>();
-        MeshFilter meshFilter = mRealTerrain.GetComponent<MeshFilter>();
-        meshRenderer.material = TerrainMaterial;
-        meshFilter.mesh = GenerateTerrainMesh(terrainHeightMap);
+
+        for (int i = 0; i < 3; i++)
+        {
+            mRealTerrains[i] = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            mRealTerrains[i].transform.position = new Vector3(0, 0, i * 128);
+            MeshRenderer meshRenderer = mRealTerrains[i].GetComponent<MeshRenderer>();
+            MeshFilter meshFilter = mRealTerrains[i].GetComponent<MeshFilter>();
+            meshRenderer.material = TerrainMaterial;
+            meshFilter.mesh = GenerateTerrainMesh(terrainHeightMap);
+
+        }
         terrainHeightMap.Dispose();
         NoiseAlgorithm.OnExit();
     }
