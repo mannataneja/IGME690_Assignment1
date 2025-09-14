@@ -296,8 +296,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1687258581}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.030153697, y: 0.96984637, z: -0.17101005, w: 0.17101015}
-  m_LocalPosition: {x: 0, y: 5, z: 15}
+  m_LocalRotation: {x: 0.0888187, y: 0.8961992, z: -0.20878959, w: 0.38124147}
+  m_LocalPosition: {x: 3.8143666, y: 23.766483, z: 66.71786}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -380,7 +380,7 @@ MonoBehaviour:
   RandomSeed: 2352
   Width: 128
   Depth: 128
-  MaxHeight: 50
+  MaxHeight: 100
   TerrainMaterial: {fileID: 2100000, guid: 011335186caba6f488f2ec39b2a817e7, type: 2}
   Frequency: 0.2
   Amplitude: 0.62

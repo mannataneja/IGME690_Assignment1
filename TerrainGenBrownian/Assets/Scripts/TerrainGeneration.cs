@@ -22,7 +22,7 @@ public class TerrainGeneration : MonoBehaviour
     private GameObject mRealTerrain;
     private NoiseAlgorithm mTerrainNoise;
     private GameObject mLight;
-    
+
     // code to get rid of fog from: https://forum.unity.com/threads/how-do-i-turn-off-fog-on-a-specific-camera-using-urp.1373826/
     // Unity calls this method automatically when it enables this component
     private void OnEnable()
@@ -129,14 +129,18 @@ public class TerrainGeneration : MonoBehaviour
                                         uvs.Add(new Vector2(0.5f, 0.0f));
                                         uvs.Add(new Vector2(0.5f, 0.5f));*/
 
-                    int[] allowedTiles = { 1, 3, 5, 8 };
-                    int randomTileIndex = allowedTiles[UnityEngine.Random.Range(0, allowedTiles.Length)];
+                    int tileIndex;
+
+                    if (y < MaxHeight / 10) tileIndex = 1;
+                    else if (y > MaxHeight / 10 && y < MaxHeight / 8) tileIndex = 3;
+                    else if (y > MaxHeight / 8 && y < MaxHeight / 6) tileIndex = 5;
+                    else tileIndex = 7;
 
                     int atlasSize = 4;
                     float tileSize = 1.0f / atlasSize;
 
-                    int tileX = randomTileIndex % atlasSize;
-                    int tileY = atlasSize - 1 - (randomTileIndex / atlasSize); //flip Y axis
+                    int tileX = tileIndex % atlasSize;
+                    int tileY = atlasSize - 1 - (tileIndex / atlasSize); //flip Y axis
 
                     float uMin = tileX * tileSize;
                     float vMin = tileY * tileSize;
@@ -172,7 +176,7 @@ public class TerrainGeneration : MonoBehaviour
         // reset the mesh
         terrainMesh.RecalculateNormals();
         terrainMesh.RecalculateBounds();
-       
+
         return terrainMesh;
     }
 
