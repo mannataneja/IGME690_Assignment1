@@ -18,7 +18,11 @@ public class TerrainGeneration : MonoBehaviour
     public int Octaves = 8;
     public float Scale = 0.01f;
     public float NormalizeBias = 1.0f;
+
     public int meshes = 1;
+    public int atlasSize = 4;
+    public int[] atlasTilesByHeight = { 1, 3, 7, 5 };
+
     public GameObject[] randomObjects;
     public float objectSpacing = 2.0f; // spacing between objects along edges
     public float pathWidth = 4.0f;     // width of central clear path
@@ -84,12 +88,11 @@ public class TerrainGeneration : MonoBehaviour
                     vert.Add(new float3(x + 1, useAltXAndZPlusY, z + 1));
 
                     int tileIndex;
-                    if (y < MaxHeight / 10) tileIndex = 1;
-                    else if (y > MaxHeight / 10 && y < MaxHeight / 8) tileIndex = 3;
-                    else if (y > MaxHeight / 8 && y < MaxHeight / 6) tileIndex = 7;
-                    else tileIndex = 5;
+                    if (y < MaxHeight / 10) tileIndex = atlasTilesByHeight[0];
+                    else if (y > MaxHeight / 10 && y < MaxHeight / 8) tileIndex = atlasTilesByHeight[1];
+                    else if (y > MaxHeight / 8 && y < MaxHeight / 6) tileIndex = atlasTilesByHeight[2];
+                    else tileIndex = atlasTilesByHeight[3];
 
-                    int atlasSize = 4;
                     float tileSize = 1.0f / atlasSize;
                     int tileX = tileIndex % atlasSize;
                     int tileY = atlasSize - 1 - (tileIndex / atlasSize);

@@ -175,7 +175,9 @@ MonoBehaviour:
   Octaves: 8
   Scale: 0.01
   NormalizeBias: 1
-  meshes: 6
+  meshes: 10
+  atlasSize: 4
+  atlasTilesByHeight: 01000000030000000700000005000000
   randomObjects:
   - {fileID: 7512912777189695979, guid: 8feab02a801d05f4f905ca912ddf9650, type: 3}
   - {fileID: 646703545782714881, guid: 9ef9bedd7c00df84a88029110faedf18, type: 3}
@@ -492,8 +494,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1440481811}
   serializedVersion: 2
-  m_LocalRotation: {x: -0.0478001, y: -0.08003709, z: -0.003842543, w: 0.9956378}
-  m_LocalPosition: {x: 69.880104, y: 25.187532, z: 1.7813143}
+  m_LocalRotation: {x: 0.08366487, y: 0.018851584, z: 0.0015830501, w: -0.9963144}
+  m_LocalPosition: {x: 75.04142, y: 43.135616, z: -15.976148}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
