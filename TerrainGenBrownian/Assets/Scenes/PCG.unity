@@ -179,11 +179,12 @@ MonoBehaviour:
   atlasSize: 4
   atlasTilesByHeight: 01000000030000000700000005000000
   randomObjects:
-  - {fileID: 7512912777189695979, guid: 8feab02a801d05f4f905ca912ddf9650, type: 3}
   - {fileID: 646703545782714881, guid: 9ef9bedd7c00df84a88029110faedf18, type: 3}
+  - {fileID: 646703545782714881, guid: f0a170c3f3a18bc44a5265f24dc59b0b, type: 3}
   - {fileID: 5036888752989583780, guid: 47aae269a5a0e434a82a60ec23ac2643, type: 3}
   - {fileID: 3131530149301139687, guid: a126f1ac20604a040b3e0546365420e9, type: 3}
   - {fileID: 2879658044720457923, guid: 7880f24af5d3ccb4a92ac62541984d23, type: 3}
+  - {fileID: 7512912777189695979, guid: 8feab02a801d05f4f905ca912ddf9650, type: 3}
   objectSpacing: 2
   pathWidth: 4
 --- !u!4 &965647980

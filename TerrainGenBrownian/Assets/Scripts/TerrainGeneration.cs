@@ -208,7 +208,7 @@ public class TerrainGeneration : MonoBehaviour
 
                 GameObject leftObj, rightObj;
 
-                if (yLeft < MaxHeight / 10) leftObj = randomObjects[1];
+                if (yLeft < MaxHeight / 10) leftObj = randomObjects[UnityEngine.Random.Range(0, 2)];
                 else if (yLeft > MaxHeight / 10 && yLeft < MaxHeight / 8) leftObj = randomObjects[2];
                 else if (yLeft > MaxHeight / 8 && yLeft < MaxHeight / 6) leftObj = randomObjects[3];
                 else leftObj = randomObjects[4];
@@ -224,8 +224,8 @@ public class TerrainGeneration : MonoBehaviour
 
                 if (UnityEngine.Random.Range(0, 100) < 50)
                 {
-                    Instantiate(randomObjects[0], new Vector3(xLeft - 5, yLeft, z + zOffset), transform.rotation, transform);
-                    Instantiate(randomObjects[0], new Vector3(xRight + 5, yRight, z + zOffset), transform.rotation, transform);
+                    Instantiate(randomObjects[5], new Vector3(xLeft - 5, yLeft, z + zOffset), transform.rotation, transform);
+                    Instantiate(randomObjects[5], new Vector3(xRight + 5, yRight, z + zOffset), transform.rotation, transform);
                 }
             }
 
