@@ -29,16 +29,59 @@ public class TerrainGeneration : MonoBehaviour
 
     private GameObject[] mRealTerrains;
     private NoiseAlgorithm mTerrainNoise;
+    private GameObject mLight;
 
+    // code to get rid of fog from: https://forum.unity.com/threads/how-do-i-turn-off-fog-on-a-specific-camera-using-urp.1373826/
+    // Unity calls this method automatically when it enables this component
+    private void OnEnable()
+    {
+        // Add WriteLogMessage as a delegate of the RenderPipelineManager.beginCameraRendering event
+        RenderPipelineManager.beginCameraRendering += BeginRender;
+        RenderPipelineManager.endCameraRendering += EndRender;
+    }
+
+    // Unity calls this method automatically when it disables this component
+    private void OnDisable()
+    {
+        // Remove WriteLogMessage as a delegate of the  RenderPipelineManager.beginCameraRendering event
+        RenderPipelineManager.beginCameraRendering -= BeginRender;
+        RenderPipelineManager.endCameraRendering -= EndRender;
+    }
+
+    // When this method is a delegate of RenderPipeline.beginCameraRendering event, Unity calls this method every time it raises the beginCameraRendering event
+    void BeginRender(ScriptableRenderContext context, Camera camera)
+    {
+        if (camera.name == "Main Camera No Fog")
+        {
+            //Debug.Log("Turn fog off");
+            RenderSettings.fog = true;
+        }
+
+    }
+
+    void EndRender(ScriptableRenderContext context, Camera camera)
+    {
+        if (camera.name == "Main Camera No Fog")
+        {
+            //Debug.Log("Turn fog on");
+            RenderSettings.fog = true;
+        }
+    }
+
+    // Start is called before the first frame update
     void Start()
     {
         mRealTerrains = new GameObject[meshes];
+
+        // create a height map using perlin noise and fractal brownian motion
         mTerrainNoise = new NoiseAlgorithm();
         mTerrainNoise.InitializeNoise(Width + 1, Depth + 1, RandomSeed);
         mTerrainNoise.InitializePerlinNoise(Frequency, Amplitude, Octaves, Lacunarity, Gain, Scale, NormalizeBias);
 
+        //run a loop for as many meshes as you want to create along the path
         for (int i = 0; i < mRealTerrains.Length; i++)
         {
+            // create the mesh and set it to the terrain variable
             mRealTerrains[i] = GameObject.CreatePrimitive(PrimitiveType.Cube);
             mRealTerrains[i].transform.position = new Vector3(0, 0, i * Depth);
             MeshRenderer meshRenderer = mRealTerrains[i].GetComponent<MeshRenderer>();
@@ -50,7 +93,7 @@ public class TerrainGeneration : MonoBehaviour
 
             meshFilter.mesh = GenerateTerrainMesh(terrainHeightMap);
 
-            // spawn objects along edges
+            //spawn objects along the edges of the path
             SpawnObjectsAlongEdges(terrainHeightMap, i * Depth);
 
             terrainHeightMap.Dispose();
@@ -58,13 +101,18 @@ public class TerrainGeneration : MonoBehaviour
 
         NoiseAlgorithm.OnExit();
     }
+
+    // create a new mesh with
+    // perlin noise
+    // makes a quad and connects it with the next quad
+    // uses whatever texture the material is given
     public Mesh GenerateTerrainMesh(NativeArray<float> heightMap)
     {
         int width = Width + 1, depth = Depth + 1;
         int height = MaxHeight;
         int indicesIndex = 0;
         int vertexIndex = 0;
-        int vertexMultiplier = 4;
+        int vertexMultiplier = 4; // create quads to fit uv's to so we can use more than one uv (4 vertices to a quad)
 
         Mesh terrainMesh = new Mesh();
         List<Vector3> vert = new List<Vector3>(width * depth * vertexMultiplier);
@@ -77,6 +125,9 @@ public class TerrainGeneration : MonoBehaviour
             {
                 if (x < width - 1 && z < depth - 1)
                 {
+                    // note: since perlin goes up to 1.0 multiplying by a height will tend to set
+                    // the average around maxheight/2. We remove most of that extra by subtracting maxheight/2
+                    // so our ground isn't always way up in the air
                     float y = heightMap[(x) * width + z] * height - (MaxHeight / 2.0f);
                     float useAltXPlusY = heightMap[(x + 1) * width + z] * height - (MaxHeight / 2.0f);
                     float useAltZPlusY = heightMap[x * width + (z + 1)] * height - (MaxHeight / 2.0f);
@@ -87,6 +138,7 @@ public class TerrainGeneration : MonoBehaviour
                     vert.Add(new float3(x + 1, useAltXPlusY, z));
                     vert.Add(new float3(x + 1, useAltXAndZPlusY, z + 1));
 
+                    //find which texture to apply based on the height
                     int tileIndex;
                     if (y < MaxHeight / 10) tileIndex = atlasTilesByHeight[0];
                     else if (y > MaxHeight / 10 && y < MaxHeight / 8) tileIndex = atlasTilesByHeight[1];
@@ -97,16 +149,20 @@ public class TerrainGeneration : MonoBehaviour
                     int tileX = tileIndex % atlasSize;
                     int tileY = atlasSize - 1 - (tileIndex / atlasSize);
 
+                    //calculates the required tile of the uv map from the tileIndex
                     float uMin = tileX * tileSize;
                     float vMin = tileY * tileSize;
                     float uMax = uMin + tileSize;
                     float vMax = vMin + tileSize;
 
+                    // add uv's
                     uvs.Add(new Vector2(uMin, vMin));
                     uvs.Add(new Vector2(uMin, vMax));
                     uvs.Add(new Vector2(uMax, vMin));
                     uvs.Add(new Vector2(uMax, vMax));
 
+                    // front or top face indices for a quad
+                    //0,2,1,0,3,2
                     indices.Add(vertexIndex);
                     indices.Add(vertexIndex + 1);
                     indices.Add(vertexIndex + 2);
@@ -119,9 +175,12 @@ public class TerrainGeneration : MonoBehaviour
             }
         }
 
+        // set the terrain var's for the mesh
         terrainMesh.vertices = vert.ToArray();
         terrainMesh.triangles = indices.ToArray();
         terrainMesh.SetUVs(0, uvs);
+
+        // reset the mesh
         terrainMesh.RecalculateNormals();
         terrainMesh.RecalculateBounds();
 
@@ -131,19 +190,19 @@ public class TerrainGeneration : MonoBehaviour
     {
         for (float z = 0; z < Depth; z += objectSpacing)
         {
-            // 50% chance to skip this spot for sparsity
+            // 50% chance to skip this spot to avoid high density of objects
             if (UnityEngine.Random.Range(0, 100) < 50)
             {
-                // left and right edges
+                //left and right edges
                 float xLeft = 0;
                 float xRight = Width;
 
-                // leave central path
+                //leave central path
                 float leftLimit = (Width - pathWidth) / 2;
                 float rightLimit = (Width + pathWidth) / 2;
 
 
-                // calculate y using height map
+                //calculate y using height map
                 float yLeft = heightMap[(Mathf.RoundToInt(xLeft)) * (Width + 1) + Mathf.RoundToInt(z)] * MaxHeight - MaxHeight / 2.0f;
                 float yRight = heightMap[(Mathf.RoundToInt(xRight)) * (Width + 1) + Mathf.RoundToInt(z)] * MaxHeight - MaxHeight / 2.0f;
 
@@ -159,7 +218,7 @@ public class TerrainGeneration : MonoBehaviour
                 else if (yRight > MaxHeight / 8 && yRight < MaxHeight / 6) rightObj = randomObjects[3];
                 else rightObj = randomObjects[4];
 
-                // spawn objects
+                //spawn objects
                 Instantiate(leftObj, new Vector3(xLeft + UnityEngine.Random.Range(0, 25), yLeft, z + zOffset), transform.rotation, transform);
                 Instantiate(rightObj, new Vector3(xRight - UnityEngine.Random.Range(0, 25), yRight, z + zOffset), transform.rotation, transform);
 
